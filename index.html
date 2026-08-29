@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>方言字表采集标注工具</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 顶部工具栏 -->
+    <div class="toolbar">
+        <div class="group">
+            <button id="modeCollect" class="active">采集模式</button>
+            <button id="modeAnnotate">标注模式</button>
+        </div>
+        <button id="importWordBtn">导入字表</button>
+        <button id="importAudioBtn">导入音频</button>
+        <select id="groupSelect"></select>
+        <div style="flex:1"></div>
+        <div class="group">
+            <button id="exportWav">导出WAV</button>
+            <button id="exportCsv">导出CSV</button>
+            <button id="exportTextGrid">导出TextGrid</button>
+        </div>
+    </div>
+
+    <!-- 主体 -->
+    <div class="main">
+        <!-- 左侧字表 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span>字表 <span id="wordCount">0</span> 字</span>
+                <span id="groupInfo">加载中...</span>
+            </div>
+            <div class="word-list-container" id="wordListContainer">
+                <div class="word-list" id="wordList"></div>
+            </div>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="content">
+            <div class="wave-panel">
+                <div class="wave-info">
+                    <span id="waveTime">00:00.000 / 00:00.000</span>
+                    <span id="sampleInfo">44100 Hz · 16bit · 单声道</span>
+                </div>
+                <div class="wave-canvas-wrap" id="waveWrap">
+                    <canvas id="waveCanvas"></canvas>
+                    <div class="playhead" id="playhead" style="left:0"></div>
+                    <div class="boundary left" id="boundaryLeft"></div>
+                    <div class="boundary right" id="boundaryRight"></div>
+                </div>
+            </div>
+
+            <!-- 标注面板 -->
+            <div class="annotation-panel" id="annotPanel">
+                <div class="current-word">
+                    <span class="idx" id="curIdx">001</span>
+                    <span id="curChar">一</span>
+                </div>
+                <div class="annot-row">
+                    <label>音标</label>
+                    <input type="text" id="ipaInput" placeholder="输入国际音标...">
+                </div>
+                <div class="annot-row">
+                    <label>备注</label>
+                    <input type="text" id="noteInput" placeholder="文读/白读/特殊说明...">
+                </div>
+                <div class="annot-row">
+                    <label>标记</label>
+                    <div class="btn-group">
+                        <button class="btn-sm" id="btnReread">重读</button>
+                        <button class="btn-sm unknown" id="btnUnknown">不识</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 采集控制栏 -->
+            <div class="record-controls" id="recordPanel">
+                <button class="record-btn" id="recordBtn">●</button>
+                <div class="control-btns">
+                    <button id="prevWord">← 上一字</button>
+                    <button id="nextWord">下一字 →</button>
+                    <button id="playSeg">播放片段</button>
+                </div>
+                <div class="status" id="recordStatus">就绪</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部状态栏 -->
+    <div class="statusbar">
+        <span id="statusProj">未命名工程</span>
+        <span id="statusMode">采集模式</span>
+        <span id="statusSave">已自动保存</span>
+    </div>
+
+    <!-- 导入字表模态框 -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-title">导入字表</div>
+            <div class="modal-body">
+                <div style="display:flex;gap:12px;align-items:center;">
+                    <button id="selectFileBtn" class="btn-sm" style="flex:1">选择本地 TXT/CSV 文件</button>
+                    <span style="font-size:12px;color:var(--sub)">或手动粘贴下方</span>
+                </div>
+                <p style="font-size:13px;color:var(--sub)">
+                    TXT 格式：每行一个汉字；CSV 格式：序号,汉字,音标,备注
+                </p>
+                <textarea id="wordInput" placeholder="一&#10;二&#10;三&#10;..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button onclick="App.importExport.closeModal('importModal')">取消</button>
+                <button class="primary" onclick="App.importExport.confirmImportWord()">确认导入</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/vendor/sql-wasm.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/db-storage.js"></script>
+    <script src="js/word-list.js"></script>
+    <script src="js/audio-record.js"></script>
+    <script src="js/wave-draw.js"></script>
+    <script src="js/annotate-core.js"></script>
+    <script src="js/import-export.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', App.init);
+    </script>
+</body>
+</html>
