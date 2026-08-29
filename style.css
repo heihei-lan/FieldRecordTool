@@ -1,0 +1,165 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        :root { --primary: #2563eb; --bg: #f8fafc; --panel: #ffffff; --border: #e2e8f0; --text: #1e293b; --sub: #64748b; --accent: #f59e0b; --success: #10b981; }
+        body { background: var(--bg); color: var(--text); height: 100vh; height: 100dvh; min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* 顶部工具栏 */
+        .toolbar {
+            height: 52px; background: var(--panel); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 16px; gap: 12px; flex-shrink: 0;
+            flex-wrap: wrap; overflow-x: auto;
+        }
+        .toolbar button, .toolbar select {
+            padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px;
+            background: white; cursor: pointer; font-size: 14px; color: var(--text);
+            transition: all 0.2s;
+        }
+        .toolbar button:hover { border-color: var(--primary); color: var(--primary); }
+        .toolbar button.primary { background: var(--primary); color: white; border-color: var(--primary); }
+        .toolbar button.primary:hover { opacity: 0.9; }
+        .toolbar button.danger { color: #dc2626; border-color: #fecaca; }
+        .toolbar .group { display: flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+        .toolbar .group button { border: none; border-radius: 0; border-right: 1px solid var(--border); }
+        .toolbar .group button:last-child { border-right: none; }
+        .toolbar .group button.active { background: var(--primary); color: white; }
+
+        /* 主体布局 */
+        .main { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+        .sidebar {
+            width: 280px; border-right: 1px solid var(--border); background: var(--panel);
+            display: flex; flex-direction: column; flex-shrink: 0;
+        }
+        .sidebar-header {
+            padding: 12px 16px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500;
+        }
+        .word-list-container { flex: 1; overflow-y: auto; position: relative; }
+        .word-list { position: absolute; width: 100%; }
+        .word-item {
+            padding: 10px 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+            display: flex; align-items: center; gap: 12px; font-size: 15px;
+            transition: background 0.15s;
+        }
+        .word-item:hover { background: #f8fafc; }
+        .word-item.active { background: #eff6ff; border-left: 3px solid var(--primary); padding-left: 13px; }
+        .word-item .idx { color: var(--sub); font-size: 12px; width: 36px; flex-shrink: 0; }
+        .word-item .char { font-size: 18px; font-weight: 500; width: 30px; }
+        .word-item .tags { display: flex; gap: 4px; margin-left: auto; }
+        .tag { font-size: 11px; padding: 2px 6px; border-radius: 4px; }
+        .tag.reread { background: #fef3c7; color: #92400e; }
+        .tag.unknown { background: #fee2e2; color: #991b1b; }
+        .tag.marked { background: #dcfce7; color: #166534; }
+
+        /* 右侧主面板 */
+        .content { flex: 1; display: flex; flex-direction: column; overflow: auto; min-height: 0; }
+        .wave-panel { flex: 1 1 0%; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+        .wave-info { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--sub); }
+        .wave-canvas-wrap {
+            flex: 1; border: 1px solid var(--border); border-radius: 8px; background: white;
+            position: relative; overflow: hidden; min-height: 0;
+        }
+        #waveCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+        .playhead { position: absolute; top: 0; bottom: 0; width: 1px; background: #ef4444; pointer-events: none; }
+        .boundary { position: absolute; top: 0; bottom: 0; width: 3px; cursor: ew-resize; background: rgba(37, 99, 235, 0.6); }
+        .boundary.left { left: 0; }
+        .boundary.right { right: 0; }
+
+        /* 标注面板 */
+        .annotation-panel {
+            border-top: 1px solid var(--border); background: var(--panel); padding: 16px;
+            display: flex; flex-direction: column; gap: 12px; flex-shrink: 0;
+        }
+        .current-word { font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+        .current-word .idx { font-size: 14px; color: var(--sub); font-weight: normal; }
+        .annot-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .annot-row label { font-size: 13px; color: var(--sub); width: 60px; flex-shrink: 0; }
+        .annot-row input[type="text"] {
+            flex: 1; min-width: 120px; padding: 8px 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 14px; outline: none;
+        }
+        .annot-row input[type="text"]:focus { border-color: var(--primary); }
+        .btn-group { display: flex; gap: 8px; }
+        .btn-sm {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+            background: white; cursor: pointer; font-size: 13px;
+        }
+        .btn-sm.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .btn-sm.unknown.active { background: #dc2626; color: white; border-color: #dc2626; }
+
+        /* 采集控制栏 */
+        .record-controls {
+            display: flex; gap: 12px; align-items: center; padding: 12px 16px;
+            border-top: 1px solid var(--border); background: var(--panel); flex-shrink: 0;
+        }
+        .record-btn {
+            width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            background: #ef4444; color: white; font-size: 20px;
+        }
+        .record-btn.recording { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } }
+        .control-btns { display: flex; gap: 8px; }
+        .control-btns button {
+            padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px;
+            background: white; cursor: pointer; font-size: 14px;
+        }
+        .status { margin-left: auto; font-size: 13px; color: var(--sub); }
+
+        /* 底部状态栏 */
+        .statusbar {
+            height: 28px; background: #f1f5f9; border-top: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 16px; font-size: 12px; color: var(--sub);
+            gap: 20px; flex-shrink: 0;
+        }
+
+        /* 模态框 */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 500px;
+            max-height: 80vh; overflow-y: auto;
+        }
+        .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .modal-body { display: flex; flex-direction: column; gap: 12px; }
+        .modal-body textarea {
+            width: 100%; height: 200px; padding: 12px; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 14px; resize: vertical; outline: none;
+        }
+        .modal-footer { margin-top: 20px; display: flex; justify-content: flex-end; gap: 12px; }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main { flex-direction: column; }
+            .sidebar { width: 100%; height: 40%; border-right: none; border-bottom: 1px solid var(--border); }
+            .wave-panel { padding: 8px; }
+            .toolbar { height: auto; padding: 8px; }
+        }
+
+        /* 小屏幕高度自适应 */
+        @media (max-height: 720px) {
+            .wave-panel { padding: 8px; gap: 6px; }
+            .wave-info { font-size: 12px; }
+            .annotation-panel { padding: 8px; gap: 6px; }
+            .current-word { font-size: 20px; }
+            .annot-row { gap: 6px; }
+            .annot-row label { width: 50px; font-size: 12px; }
+            .annot-row input[type="text"] { padding: 6px 10px; font-size: 13px; }
+            .record-controls { padding: 8px 12px; gap: 8px; }
+            .record-btn { width: 40px; height: 40px; font-size: 16px; }
+            .control-btns { gap: 4px; }
+            .control-btns button { padding: 6px 10px; font-size: 13px; }
+        }
+
+        /* 极小屏幕高度 */
+        @media (max-height: 600px) {
+            .wave-panel { padding: 6px; gap: 4px; }
+            .annotation-panel { padding: 6px; gap: 4px; }
+            .current-word { font-size: 18px; }
+            .record-controls { padding: 6px 10px; }
+            .record-btn { width: 36px; height: 36px; font-size: 14px; }
+            .statusbar { height: 24px; font-size: 11px; }
+            .toolbar { height: 44px; padding: 0 10px; gap: 6px; }
+            .toolbar button, .toolbar select { padding: 4px 10px; font-size: 13px; }
+        }
